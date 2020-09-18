@@ -1,4 +1,4 @@
-## Written by Alex Boone
+soun## Written by Alex Boone
 ## Modified by Steven Weisberg
 ## Last edit: 2/10/2020
 
@@ -13,7 +13,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 from imageio import imread
 import os
 
-Plotter = False
+Plotter = True
 Time_Dist_Success = True
 
 #******************************************************************************************************
@@ -108,7 +108,7 @@ if (Plotter == True):
                     elif current_line == '\n':
                         print('uh oh')
                     #Gets x,z coordinates from each line and puts into array
-                    else:
+                    elif Trial_Count > 0:
                         no_time_line = current_line.split("  ")
                         movement = no_time_line[1].split(",")
                         x = float(movement[0])
