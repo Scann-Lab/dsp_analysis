@@ -1,4 +1,4 @@
-soun## Written by Alex Boone
+## Written by Alex Boone
 ## Modified by Steven Weisberg
 ## Last edit: 2/10/2020
 
@@ -104,7 +104,8 @@ if (Plotter == True):
                         currTrial = trialID
 
                         print (title)
-
+                    elif "DSPType" in current_line:
+                        Alt_Exp = current_line.strip()
                     elif current_line == '\n':
                         print('uh oh')
                     #Gets x,z coordinates from each line and puts into array
