@@ -240,24 +240,21 @@ if (Time_Dist_Success == True):
             y1 = 0.0
             x2 = 0.0
             y2 = 0.0
+            
+            headerLines = 0
+
             with open(os.path.join(indir,f)) as infile:
                 for current_line in infile: 
                     
-                    if headerCounter < 5:
-
-                        if current_line.startswith('ParticipantNo'):
+                    if headerLines < 5:
+                        if current_line.startswith('Participant'):
                             ParticipantNo = current_line.split(': ')[1]
-                            headerCounter += 1
                         elif current_line.startswith('DSPType'):
                             DSPType = current_line.split(': ')[1]
-                            headerCounter += 1
                         elif current_line.startswith('Encoding'):
                             EncodingTours = current_line.split(': ')[1]
-                            headerCounter += 1
-                        elif current_line.startswith('Repetition'):
-                            headerCounter += 1
-                        elif current_line.startswith('!!'):
-                            headerCounter += 1
+
+                        headerLines += 1
 
                     elif (current_line.startswith('!!')): #At every new trial, gets info and prints
                         trialStart = True
