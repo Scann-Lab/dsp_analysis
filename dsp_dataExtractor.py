@@ -10,10 +10,10 @@
 
 from matplotlib import pyplot
 from matplotlib.backends.backend_pdf import PdfPages
-from imageio import imread
+#from imageio import imread
 import os
 
-Plotter = True
+Plotter = False
 Time_Dist_Success = True
 
 #******************************************************************************************************
@@ -179,9 +179,6 @@ def checkFirstMove(line1, line2):
 def appendInput():
     line = []
     line.append(ParticipantNo)
-    line.append(ParticipantGen)
-    line.append(Stressor)
-    line.append(ExpType)
     line.append(DSPType)
     line.append(EncodingTours)
     line.append(TrialNo)
@@ -197,15 +194,15 @@ def appendInput():
 if (Time_Dist_Success == True):
 
     
-    outPutHeader = ['ParticipantNo', 'ParticipantGen', 'Stressor','ExpType','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
+    outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
                      'Status', 'Time_to_First_Movement']
 
     wb = xlsxwriter.Workbook(os.path.join(outdir,"Master_DSP_all.xlsx"))
 
     sheet = wb.add_worksheet('Sheet')
 
-    for i in range (10):
-        sheet.write(0, i, outPutHeader[i])
+    for i in range (len(outputHeader)):
+        sheet.write(0, i, outputHeader[i])
 
 
 
@@ -246,25 +243,20 @@ if (Time_Dist_Success == True):
             with open(os.path.join(indir,f)) as infile:
                 for current_line in infile: 
                     
-                    if headerCounter != 6:
+                    if headerCounter < 5:
 
                         if current_line.startswith('ParticipantNo'):
-                            ParticipantNo = current_line[15:18]
-                            headerCounter += 1
-                        elif current_line.startswith('Stressor'):
-                            Stressor = current_line[10:12]
-                            headerCounter += 1                                          
-                        elif current_line.startswith('Exp Type'):
-                            ExpType = current_line[11:18]
+                            ParticipantNo = current_line.split(': ')[1]
                             headerCounter += 1
                         elif current_line.startswith('DSPType'):
-                            DSPType = current_line[9:10]
-                            headerCounter += 1
-                        elif current_line.startswith('ParticipantGen'):
-                            ParticipantGen = current_line[16:17]
+                            DSPType = current_line.split(': ')[1]
                             headerCounter += 1
                         elif current_line.startswith('Encoding'):
-                            EncodingTours = current_line[16:17]
+                            EncodingTours = current_line.split(': ')[1]
+                            headerCounter += 1
+                        elif current_line.startswith('Repetition'):
+                            headerCounter += 1
+                        elif current_line.startswith('!!'):
                             headerCounter += 1
 
                     elif (current_line.startswith('!!')): #At every new trial, gets info and prints
@@ -323,7 +315,7 @@ if (Time_Dist_Success == True):
     
                         prev_line = current_line
 
-                    #Does trial #24
+                #Does trial #24
                 info = getInfo(prev_line)
                 Time_Elapsed = float(info[0])
                 Status = checkFail(Time_Elapsed)
