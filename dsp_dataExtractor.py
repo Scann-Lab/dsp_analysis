@@ -1,4 +1,4 @@
-soun## Written by Alex Boone
+## Written by Alex Boone
 ## Modified by Steven Weisberg
 ## Last edit: 2/10/2020
 
@@ -12,14 +12,19 @@ from matplotlib import pyplot
 from matplotlib.backends.backend_pdf import PdfPages
 from imageio import imread
 import os
+from shutil import copyfile
 
+# Do you want to save out the PDFs?
 Plotter = True
+# Do you want to save out the coding spreadsheets?
 Time_Dist_Success = True
+# Do you want to re-run all subjects?
+rerun_all = False
+
 
 #******************************************************************************************************
-#                                         PLOTTER
+#                                         Finding the Files
 #******************************************************************************************************
-
 
 scriptDir = os.getcwd()
 
@@ -29,7 +34,29 @@ masterDir = os.getcwd()
 
 
 indir = os.path.join(masterDir,'DSP_RawData')
-outdir = os.path.join(masterDir,'DSP_ProcessedData')
+
+
+outdir_backup = os.path.join(masterDir,'DSP_RawData','Script_Output_DO_NOT_TOUCH')
+outdir_for_manual_coding = os.path.join(masterDir,'DSP_ProcessedData','To_be_manually_coded')
+outdir_for_pdfs = os.path.join(masterDir,'DSP_ProcessedData','PDFs')
+
+raw_files = []
+if rerun_all:
+    raw_files = os.listdir(indir)
+else:
+    already_coded_stems = []
+    already_coded = os.listdir(outdir_backup)
+    for i in already_coded:
+        if 'Participant' in i:
+            already_coded_stems.append(i[:-4] + '.txt')
+    for f in os.listdir(indir):
+        if f not in already_coded_stems and '.txt' in f:
+            raw_files.append(f)
+    
+
+#******************************************************************************************************
+#                                         PLOTTER
+#******************************************************************************************************
 
 
 def Graph(trialID):
@@ -74,7 +101,8 @@ if (Plotter == True):
     TrialID = ""
     title = ""
 
-    for f in os.listdir(indir):
+    
+    for f in raw_files:
         #the first file in each directory was this for some reason
         if ("txt" in f):
             print (f)
@@ -82,14 +110,21 @@ if (Plotter == True):
             Trial_Count = 0
 
             with open(os.path.join(indir,f)) as infile:
-                filename = f + ".pdf"
-                pp = PdfPages(os.path.join(outdir,filename))
+                filename = f[:-4] + ".pdf"
+                pp = PdfPages(os.path.join(outdir_backup,filename))
                 PosX_array = []
                 PosY_array = []
-
+                headerLines = 0
+                prev_line = ""
                 for current_line in infile:
 
-                    if (current_line.startswith("!!")):
+                    if headerLines < 5 and not (current_line.startswith("!!") and not prev_line.startswith("Encoding")):
+
+                        prev_line = current_line
+                        headerLines += 1
+
+
+                    elif (current_line.startswith("!!")):
                         if (Trial_Count > 0):
                             Graph(currTrial)
                             PosX_array = []
@@ -104,7 +139,8 @@ if (Plotter == True):
                         currTrial = trialID
 
                         print (title)
-
+                    elif "DSPType" in current_line:
+                        Alt_Exp = current_line.strip()
                     elif current_line == '\n':
                         print('uh oh')
                     #Gets x,z coordinates from each line and puts into array
@@ -122,11 +158,15 @@ if (Plotter == True):
                     Graph(currTrial)
                     PosX_array = []
                     PosY_array = []
-
-
+                    
+            # Copy file for manual coding directory
+            if os.path.exists(os.path.join(outdir_for_pdfs,filename)):
+                os.remove(os.path.join(outdir_for_pdfs,filename))
+            copyfile(os.path.join(outdir_backup,filename),os.path.join(outdir_for_pdfs,filename))
+            
             pyplot.close()
             pp.close()
-#########
+
 
 #******************************************************************************************************
 #                                TIME/DIST/SUCESS PARSER
@@ -178,9 +218,6 @@ def checkFirstMove(line1, line2):
 def appendInput():
     line = []
     line.append(ParticipantNo)
-    line.append(ParticipantGen)
-    line.append(Stressor)
-    line.append(ExpType)
     line.append(DSPType)
     line.append(EncodingTours)
     line.append(TrialNo)
@@ -196,41 +233,29 @@ def appendInput():
 if (Time_Dist_Success == True):
 
     
-    outPutHeader = ['ParticipantNo', 'ParticipantGen', 'Stressor','ExpType','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
+    outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
                      'Status', 'Time_to_First_Movement']
 
-    wb = xlsxwriter.Workbook(os.path.join(outdir,"Master_DSP_all.xlsx"))
-
-    sheet = wb.add_worksheet('Sheet')
-
-    for i in range (10):
-        sheet.write(0, i, outPutHeader[i])
-
-
-
-    input_line = []
-
-    ParticipantNo = ""
-    Stressor = ""
-    ExpType = ""
-    DSPType = ""
-    EncodingTours = ""
-    ParticipantGen = ""
-    TrialNo = 0
-    TrialID = ""
-    Time_Elapsed = 0.0
-    Dist = 0.0
-    Status = ""
-    Time_First = 0.0
-    
-    headerCounter = 0
-    trialStart = False
-    
-    row = 0
-
-    for f in os.listdir(indir):
+    for f in raw_files:
         if ("txt" in f):
             print (f)
+  
+            input_line = []
+            ParticipantNo = ""
+            Stressor = ""
+            ExpType = ""
+            DSPType = ""
+            EncodingTours = ""
+            ParticipantGen = ""
+            TrialNo = 0
+            TrialID = ""
+            Time_Elapsed = 0.0
+            Dist = 0.0
+            Status = ""
+            Time_First = 0.0          
+            headerCounter = 0
+            trialStart = False          
+            row = 0
             numOfLines = 0
             TrialNo = 0
             prev_line = ""
@@ -242,29 +267,29 @@ if (Time_Dist_Success == True):
             y1 = 0.0
             x2 = 0.0
             y2 = 0.0
+            headerLines = 0
+
             with open(os.path.join(indir,f)) as infile:
+                filename = f[:-4] + ".xlsx"
+
+                wb = xlsxwriter.Workbook(os.path.join(outdir_backup,filename))
+            
+                sheet = wb.add_worksheet('Sheet')
+            
+                for i in range (len(outputHeader)):
+                    sheet.write(0, i, outputHeader[i])
+            
                 for current_line in infile: 
                     
-                    if headerCounter != 6:
-
-                        if current_line.startswith('ParticipantNo'):
-                            ParticipantNo = current_line[15:18]
-                            headerCounter += 1
-                        elif current_line.startswith('Stressor'):
-                            Stressor = current_line[10:12]
-                            headerCounter += 1                                          
-                        elif current_line.startswith('Exp Type'):
-                            ExpType = current_line[11:18]
-                            headerCounter += 1
+                    if headerLines < 5:
+                        if current_line.startswith('Participant'):
+                            ParticipantNo = current_line.split(': ')[1]
                         elif current_line.startswith('DSPType'):
-                            DSPType = current_line[9:10]
-                            headerCounter += 1
-                        elif current_line.startswith('ParticipantGen'):
-                            ParticipantGen = current_line[16:17]
-                            headerCounter += 1
+                            DSPType = current_line.split(': ')[1]
                         elif current_line.startswith('Encoding'):
-                            EncodingTours = current_line[16:17]
-                            headerCounter += 1
+                            EncodingTours = current_line.split(': ')[1]
+
+                        headerLines += 1
 
                     elif (current_line.startswith('!!')): #At every new trial, gets info and prints
                         trialStart = True
@@ -295,7 +320,7 @@ if (Time_Dist_Success == True):
                         row += 1
                         TrialNo += 1
     
-                    elif trialStart: #Finds time of first movement and sums x and y values for distance
+                    elif trialStart: #Finds time of first movement and sums x and y values for distance    
                         if (prev_line.startswith("!")) == False and (prev_line != ""):
                             line1 = getInfo(current_line)
                             line2 = getInfo(prev_line)
@@ -322,7 +347,7 @@ if (Time_Dist_Success == True):
     
                         prev_line = current_line
 
-                    #Does trial #24
+                #Does trial #24
                 info = getInfo(prev_line)
                 Time_Elapsed = float(info[0])
                 Status = checkFail(Time_Elapsed)
@@ -336,6 +361,10 @@ if (Time_Dist_Success == True):
                     sheet.write(row, col, i)
                     col += 1
 
-                            #print(input_line)
 
-    wb.close()
+            wb.close()
+            
+            if os.path.exists(os.path.join(outdir_for_manual_coding,filename)):
+                os.remove(os.path.join(outdir_for_manual_coding,filename))
+            copyfile(os.path.join(outdir_backup,filename),os.path.join(outdir_for_manual_coding,filename))
+                
