@@ -3,9 +3,9 @@
 ## Last edit: 2/10/2020
 
 ### Purpose of this script is to process location data from the Dual Solution
-### Paradigm, built in Unity 3D. It will output a set of images that can be 
+### Paradigm, built in Unity 3D. It will output a set of images that can be
 ### hand-coded to determine A) Success, and B) which path was taken (familiar
-### route or novel shortcut). 
+### route or novel shortcut).
 
 
 from matplotlib import pyplot
@@ -52,14 +52,14 @@ else:
     for f in os.listdir(indir):
         if f not in already_coded_stems and '.txt' in f:
             raw_files.append(f)
-    
+
 
 #******************************************************************************************************
 #                                         PLOTTER
 #******************************************************************************************************
 
 
-def Graph(trialID):
+def Graph(trialID,expPrefix):
     pyplot.figure(dpi = 350)
     figureFiletype = ".png"
     pyplot.plot(PosX_array, PosY_array, "k", label = "__nolegend__")
@@ -70,13 +70,8 @@ def Graph(trialID):
     pyplot.xlabel("X")
     pyplot.title(title)
     pyplot.legend(["Path"], loc = 'center left', bbox_to_anchor = (1.0, 0.5))
-   
-    
-    # Which version of the experiment are we in?
-    if (Alt_Exp == "DSPType: 2"):
-        expPrefix = "DSP2_"
-    else:
-        expPrefix = "DSP1_"
+
+
 
     # Open the image with that trial structure
     imageFilename = expPrefix + trialID + figureFiletype
@@ -92,16 +87,24 @@ def Graph(trialID):
     pp.savefig()
     pyplot.clf()
 
+
+
+# define Python user-defined exceptions
+class NoAltExpError(Exception):
+    """Raised when alt experiment not recognized"""
+    pass
+
+
 #######
 if (Plotter == True):
-    
+
 
     currTrial = ""
     Alt_Exp = ""
     TrialID = ""
     title = ""
+    expPrefix = ""
 
-    
     for f in raw_files:
         #the first file in each directory was this for some reason
         if ("txt" in f):
@@ -111,22 +114,23 @@ if (Plotter == True):
 
             with open(os.path.join(indir,f)) as infile:
                 filename = f[:-4] + ".pdf"
-                pp = PdfPages(os.path.join(outdir_backup,filename))
+                try:
+                    pp = PdfPages(os.path.join(outdir_backup,filename))
+                except PermissionError:
+                    print('Could not open PDF - delete or alter permissions and try again.')
+                    continue
+                
                 PosX_array = []
                 PosY_array = []
                 headerLines = 0
                 prev_line = ""
+                
                 for current_line in infile:
-
-                    if headerLines < 5 and not (current_line.startswith("!!") and not prev_line.startswith("Encoding")):
-
-                        prev_line = current_line
-                        headerLines += 1
-
-
-                    elif (current_line.startswith("!!")):
+                    
+                        
+                    if (current_line.startswith("!!")) and not "Encoding" in prev_line:
                         if (Trial_Count > 0):
-                            Graph(currTrial)
+                            Graph(currTrial,expPrefix)
                             PosX_array = []
                             PosY_array = []
 
@@ -139,10 +143,26 @@ if (Plotter == True):
                         currTrial = trialID
 
                         print (title)
+                        
                     elif "DSPType" in current_line:
                         Alt_Exp = current_line.strip()
-                    elif current_line == '\n':
-                        print('uh oh')
+                    
+                    
+                    # user guesses a number until he/she gets it right
+                        while True:
+                            try:
+                            
+                                if (Alt_Exp == "DSPType: 2"):
+                                    expPrefix = "DSP2_"
+                                elif (Alt_Exp == "DSPType: 1"):
+                                    expPrefix = "DSP1_"
+                                else:
+                                    raise NoAltExpError
+                                break
+                            except NoAltExpError:
+                                print("Environment type not found. Make sure DSPType is set to 1 or 2.\n")
+           
+                     
                     #Gets x,z coordinates from each line and puts into array
                     elif Trial_Count > 0:
                         no_time_line = current_line.split("  ")
@@ -152,21 +172,28 @@ if (Plotter == True):
 
                         PosX_array.append(x)
                         PosY_array.append(y)
+                    
+       
+                    #Plots the last trial
 
-                #Plots the last trial
+                    prev_line = current_line
+                      
                 else:
-                    Graph(currTrial)
+                    Graph(currTrial,expPrefix)
                     PosX_array = []
                     PosY_array = []
-                    
+                
+
             # Copy file for manual coding directory
             if os.path.exists(os.path.join(outdir_for_pdfs,filename)):
                 os.remove(os.path.join(outdir_for_pdfs,filename))
-            copyfile(os.path.join(outdir_backup,filename),os.path.join(outdir_for_pdfs,filename))
             
-            pyplot.close()
             pp.close()
+            
+            copyfile(os.path.join(outdir_backup,filename),os.path.join(outdir_for_pdfs,filename))
 
+            pyplot.close()
+            
 
 #******************************************************************************************************
 #                                TIME/DIST/SUCESS PARSER
@@ -232,14 +259,14 @@ def appendInput():
 
 if (Time_Dist_Success == True):
 
-    
+
     outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
                      'Status', 'Time_to_First_Movement']
 
     for f in raw_files:
         if ("txt" in f):
             print (f)
-  
+
             input_line = []
             ParticipantNo = ""
             Stressor = ""
@@ -252,9 +279,9 @@ if (Time_Dist_Success == True):
             Time_Elapsed = 0.0
             Dist = 0.0
             Status = ""
-            Time_First = 0.0          
+            Time_First = 0.0
             headerCounter = 0
-            trialStart = False          
+            trialStart = False
             row = 0
             numOfLines = 0
             TrialNo = 0
@@ -273,14 +300,14 @@ if (Time_Dist_Success == True):
                 filename = f[:-4] + ".xlsx"
 
                 wb = xlsxwriter.Workbook(os.path.join(outdir_backup,filename))
-            
+
                 sheet = wb.add_worksheet('Sheet')
-            
+
                 for i in range (len(outputHeader)):
                     sheet.write(0, i, outputHeader[i])
-            
-                for current_line in infile: 
-                    
+
+                for current_line in infile:
+
                     if headerLines < 5:
                         if current_line.startswith('Participant'):
                             ParticipantNo = current_line.split(': ')[1]
@@ -303,24 +330,24 @@ if (Time_Dist_Success == True):
                             y1 = 0.0
                             x2 = 0.0
                             y2 = 0.0
-    
+
                             input_line = appendInput()
-    
-    
+
+
                         TrialID = getTrialID(current_line)
                         TrialID = TrialID[0:7]
-    
+
                         col = 0
-    
+
                         for i in input_line: #Writes to excel file
                             sheet.write(row, col, i)
                             col += 1
-    
+
                         Dist = 0.0
                         row += 1
                         TrialNo += 1
-    
-                    elif trialStart: #Finds time of first movement and sums x and y values for distance    
+
+                    elif trialStart: #Finds time of first movement and sums x and y values for distance
                         if (prev_line.startswith("!")) == False and (prev_line != ""):
                             line1 = getInfo(current_line)
                             line2 = getInfo(prev_line)
@@ -328,23 +355,23 @@ if (Time_Dist_Success == True):
                             y1 = float(line1[2])
                             x2 = float(line2[1])
                             y2 = float(line2[2])
-    
-                    
+
+
                             Dist += float(distance(x1, y1, x2, y2))
-    
-                    
+
+
                             if foundFirstTime == False:
                                 line1 = getInfo(current_line)
                                 line2 = getInfo(prev_line)
-    
+
                                 if (checkFirstMove(line1, line2)):
                                     Time_First = line1[0]
                                     foundFirstTime = True
-    
+
                         #To prepare for trial #24
                         if TrialNo == 24:
                             curr_line = current_line
-    
+
                         prev_line = current_line
 
                 #Does trial #24
@@ -354,8 +381,8 @@ if (Time_Dist_Success == True):
                 foundFirstTime = False
                 prev_line = ""
                 input_line = appendInput()
-    
-                col = 0 
+
+                col = 0
 
                 for i in input_line:
                     sheet.write(row, col, i)
@@ -363,8 +390,7 @@ if (Time_Dist_Success == True):
 
 
             wb.close()
-            
+
             if os.path.exists(os.path.join(outdir_for_manual_coding,filename)):
                 os.remove(os.path.join(outdir_for_manual_coding,filename))
             copyfile(os.path.join(outdir_backup,filename),os.path.join(outdir_for_manual_coding,filename))
-                
