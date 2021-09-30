@@ -15,7 +15,7 @@ import os
 from shutil import copyfile
 
 # Do you want to save out the PDFs?
-Plotter = True
+Plotter = False
 # Do you want to save out the coding spreadsheets?
 Time_Dist_Success = True
 # Do you want to re-run all subjects?
@@ -47,10 +47,10 @@ else:
     already_coded_stems = []
     already_coded = os.listdir(outdir_backup)
     for i in already_coded:
-        if 'Participant' in i:
-            already_coded_stems.append(i[:-4] + '.txt')
+        if 'Participant' in i and '.xlsx' in i:
+            already_coded_stems.append(i[:-4] + 'txt')
     for f in os.listdir(indir):
-        if f not in already_coded_stems and '.txt' in f:
+        if f not in already_coded_stems and 'txt' in f:
             raw_files.append(f)
 
 
@@ -212,8 +212,8 @@ def distance(x1,y1,x2,y2): #simple distance formula
     z = x+y
     return round(math.sqrt(z), 2)
 
-def checkFail(time):
-    if time >= 39.98:
+def checkFail(time,failTime):
+    if time >= failTime-.02:
         return "Failure"
     else:
         return "Success"
@@ -253,6 +253,7 @@ def appendInput():
     line.append(Dist)
     line.append(Status)
     line.append(Time_First)
+    line.append(failTime)
     return line
 
 
@@ -261,7 +262,7 @@ if (Time_Dist_Success == True):
 
 
     outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
-                     'Status', 'Time_to_First_Movement']
+                     'Status', 'Time_to_First_Movement','FailTime']
 
     for f in raw_files:
         if ("txt" in f):
@@ -294,7 +295,9 @@ if (Time_Dist_Success == True):
             y1 = 0.0
             x2 = 0.0
             y2 = 0.0
+            failTime = 0
             headerLines = 0
+            lineInit = 0
 
             with open(os.path.join(indir,f)) as infile:
                 filename = f[:-4] + ".xlsx"
@@ -307,23 +310,35 @@ if (Time_Dist_Success == True):
                     sheet.write(0, i, outputHeader[i])
 
                 for current_line in infile:
-
-                    if headerLines < 5:
-                        if current_line.startswith('Participant'):
-                            ParticipantNo = current_line.split(': ')[1]
-                        elif current_line.startswith('DSPType'):
+                    if lineInit == 0:
+                        ParticipantNo = current_line.split(': ')[1]
+                        lineInit += 1
+                    elif lineInit == 1:
+                        if current_line.startswith('Time for'):
+                            failTime = float(current_line.split(': ')[1])
+                            lineInit = 2
+                        else:
+                            failTime = 40
+                            lineInit = 4
+                                                
+                    elif lineInit < 7:
+                        if current_line.startswith('DSPType'):
                             DSPType = current_line.split(': ')[1]
                         elif current_line.startswith('Encoding'):
                             EncodingTours = current_line.split(': ')[1]
-
-                        headerLines += 1
+                        
+                        lineInit += 1
+                        
+                    
 
                     elif (current_line.startswith('!!')): #At every new trial, gets info and prints
+                        if failTime == 0:
+                            failTime = 40
                         trialStart = True
                         if TrialNo > 0:
                             info = getInfo(prev_line)
                             Time_Elapsed = float(info[0])
-                            Status = checkFail(Time_Elapsed)
+                            Status = checkFail(Time_Elapsed,failTime)
                             foundFirstTime = False
                             prev_line = ""
                             x1 = 0.0
@@ -377,7 +392,7 @@ if (Time_Dist_Success == True):
                 #Does trial #24
                 info = getInfo(prev_line)
                 Time_Elapsed = float(info[0])
-                Status = checkFail(Time_Elapsed)
+                Status = checkFail(Time_Elapsed,failTime)
                 foundFirstTime = False
                 prev_line = ""
                 input_line = appendInput()
