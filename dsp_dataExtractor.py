@@ -15,7 +15,7 @@ import os
 from shutil import copyfile
 
 # Do you want to save out the PDFs?
-Plotter = False
+Plotter = True
 # Do you want to save out the coding spreadsheets?
 Time_Dist_Success = True
 # Do you want to re-run all subjects?
