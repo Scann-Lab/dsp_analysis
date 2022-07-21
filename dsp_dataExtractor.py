@@ -10,13 +10,14 @@
 
 from matplotlib import pyplot
 from matplotlib.backends.backend_pdf import PdfPages
-from imageio import imread
+#from imageio import imread
 import os
 from shutil import copyfile
 
 # Do you want to save out the PDFs?
 Plotter = True
 # Do you want to save out the coding spreadsheets?
+
 Time_Dist_Success = True
 # Do you want to re-run all subjects?
 rerun_all = False
@@ -143,6 +144,7 @@ if (Plotter == True):
                         currTrial = trialID
 
                         print (title)
+<<<<<<< HEAD
                         
                     elif "DSPType" in current_line:
                         Alt_Exp = current_line.strip()
@@ -163,6 +165,7 @@ if (Plotter == True):
                                 print("Environment type not found. Make sure DSPType is set to 1 or 2.\n")
            
                      
+
                     #Gets x,z coordinates from each line and puts into array
                     elif Trial_Count > 0:
                         no_time_line = current_line.split("  ")
@@ -260,6 +263,19 @@ def appendInput():
 
 if (Time_Dist_Success == True):
 
+<<<<<<< HEAD
+=======
+    
+    outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
+                     'Status', 'Time_to_First_Movement']
+
+    wb = xlsxwriter.Workbook(os.path.join(outdir,"Master_DSP_all.xlsx"))
+
+    sheet = wb.add_worksheet('Sheet')
+
+    for i in range (len(outputHeader)):
+        sheet.write(0, i, outputHeader[i])
+>>>>>>> master
 
     outputHeader = ['ParticipantNo','DSPType', 'EncodingTours', 'TrialNo', 'TrialID', 'Time Elapsed', 'Distance',
                      'Status', 'Time_to_First_Movement','FailTime']
@@ -295,6 +311,7 @@ if (Time_Dist_Success == True):
             y1 = 0.0
             x2 = 0.0
             y2 = 0.0
+<<<<<<< HEAD
             failTime = 0
             headerLines = 0
             lineInit = 0
@@ -330,6 +347,21 @@ if (Time_Dist_Success == True):
                         lineInit += 1
                         
                     
+            
+            headerLines = 0
+
+            with open(os.path.join(indir,f)) as infile:
+                for current_line in infile: 
+                    
+                    if headerLines < 5:
+                        if current_line.startswith('Participant'):
+                            ParticipantNo = current_line.split(': ')[1]
+                        elif current_line.startswith('DSPType'):
+                            DSPType = current_line.split(': ')[1]
+                        elif current_line.startswith('Encoding'):
+                            EncodingTours = current_line.split(': ')[1]
+
+                        headerLines += 1
 
                     elif (current_line.startswith('!!')): #At every new trial, gets info and prints
                         if failTime == 0:
