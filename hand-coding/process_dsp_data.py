@@ -18,10 +18,12 @@ plt.ioff()
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 
 # Where are the raw data?
-indir = os.path.join(scriptDir, "..", "DSP_RawData")
+indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
 
 # These should be set relative to the code directory.
-outdir_base = os.path.join(scriptDir, "..", "DSP_RawData", "Script_Output_DO_NOT_TOUCH")
+outdir_base = os.path.join(
+    scriptDir, "..", "..", "DSP_RawData", "Script_Output_DO_NOT_TOUCH"
+)
 outdir_for_summary_dfs = os.path.join(outdir_base, "summary_dfs")
 outdir_for_pdfs = os.path.join(outdir_base, "pdfs")
 outdir_movement = os.path.join(outdir_base, "raw_movement_data")
@@ -41,8 +43,8 @@ raw_files_all = list(
 def calculate_distance(x1, y1, x2, y2):  # simple distance formula
     x = x1 - x2
     y = y1 - y2
-    x = x**2
-    y = y**2
+    x = x ** 2
+    y = y ** 2
     z = x + y
     return np.round(np.sqrt(z), 2)
 
@@ -273,7 +275,7 @@ def graph_trial(movement_df, trial_id, pdf):
 
     # Open the image with that trial structure
     imageFilename = trial_id.upper() + figureFiletype
-    bestImage = os.path.join(scriptDir, "Nav_stratAbility_Maps", imageFilename)
+    bestImage = os.path.join(scriptDir, "..", "Nav_stratAbility_Maps", imageFilename)
     img = imread(bestImage)
 
     plt.imshow(img, zorder=0, extent=[0.0, 222.0, 0.0, 222.0])  # left right bottom top
