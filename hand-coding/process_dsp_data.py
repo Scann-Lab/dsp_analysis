@@ -43,8 +43,8 @@ raw_files_all = list(
 def calculate_distance(x1, y1, x2, y2):  # simple distance formula
     x = x1 - x2
     y = y1 - y2
-    x = x ** 2
-    y = y ** 2
+    x = x**2
+    y = y**2
     z = x + y
     return np.round(np.sqrt(z), 2)
 
@@ -248,7 +248,7 @@ def pandas_to_csv(raw_df, default_fail_time="40"):
 
 def save_file(df, file: str, dir: str):
 
-    df.to_csv(os.path.join(dir, file), index=False)
+    df.to_csv(os.path.abspath(os.path.join(dir, file)), index=False)
 
     print(f"File saved as: {dir}//{file}\n")
 
@@ -310,7 +310,9 @@ def run_all(file, csv=True, movement=True, pdf=True):
     # Open raw data and load dataframe
     with open(os.path.join(indir, file)) as infile:
 
-        raw_df = pd.read_csv(infile, sep="\n", header=None, names=["lines"])
+        # Hack here to use a separator that we aren't using so each line gets read in one at a time.
+        raw_df = pd.read_csv(infile, sep="\t", header=None, names=["lines"])
+
     # Transform raw data to a formatted df and a trajectory only dataset
     df, movement_df = pandas_to_csv(raw_df)
 
