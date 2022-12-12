@@ -18,12 +18,11 @@ plt.ioff()
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 
 # For testing
-indir = os.path.join(scriptDir, "..", "tests")
-
+#indir = os.path.join(scriptDir, "..", "tests")
 
 
 # Where are the raw data?
-# indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
+indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
 
 # These should be set relative to the code directory.
 outdir_base = os.path.join(indir, "Script_Output_DO_NOT_TOUCH")
