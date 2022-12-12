@@ -18,11 +18,11 @@ plt.ioff()
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 
 # For testing
-#indir = os.path.join(scriptDir, "..", "tests")
+indir = os.path.join(scriptDir, "..", "tests")
 
 
 # Where are the raw data?
-indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
+# indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
 
 # These should be set relative to the code directory.
 outdir_base = os.path.join(indir, "Script_Output_DO_NOT_TOUCH")
@@ -41,7 +41,7 @@ raw_files_all = list(
     - set(glob.glob(indir + "//*Ranking*"))
 )
 
-
+# Helper functions
 def calculate_distance(x1, y1, x2, y2):  # simple distance formula
     x = x1 - x2
     y = y1 - y2
@@ -120,6 +120,7 @@ def get_distance_measures(raw_df):
                 make_movement_data(slice, movement_df, trial_ids.iloc[i]["lines"])
             )
 
+    # Calculate distances using the previous x and z and an anonymous function
     movement_df_all["dist"] = movement_df_all.apply(
         lambda x: calculate_distance(x["prev_x"], x["prev_z"], x["x"], x["z"]), axis=1
     )
@@ -236,7 +237,10 @@ def pandas_to_csv(raw_df, default_fail_time="40"):
     first_moves = movement_df[movement_df["dist"] > 0.001].drop_duplicates(
         "TrialID", keep="first"
     )[["TrialID", "time"]]
-    first_moves = first_moves.rename(columns={"t": "Time_to_First_Movement"})
+
+    # TODO: This rename isn't happening
+    first_moves = first_moves.rename(columns={"time": "Time_to_First_Movement"})
+
     df = df.merge(first_moves, on="TrialID", how="outer")
 
     movement_df["ParticipantNo"] = (

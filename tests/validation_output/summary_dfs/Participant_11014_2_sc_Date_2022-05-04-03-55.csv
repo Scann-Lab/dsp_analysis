@@ -1,4 +1,4 @@
-ParticipantNo,DSPType,EncodingTours,TrialNo,TrialID,Time Elapsed,Status,FailTime,Distance,time
+ParticipantNo,DSPType,EncodingTours,TrialNo,TrialID,Time Elapsed,Status,FailTime,Distance,Time_to_First_Movement
 11014,2,0,1,dsp2_14,21.08,Success,60,274.88,2.62
 11014,2,0,2,dsp2_02,56.82,Success,60,823.66,1.63
 11014,2,0,3,dsp2_23,37.82,Success,60,544.29,1.4
