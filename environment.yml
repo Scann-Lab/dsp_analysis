@@ -108,4 +108,3 @@ dependencies:
     - simplejson==3.17.6
     - traits==6.3.2
     - urllib3==1.26.12
-prefix: C:\Users\stevenweisberg\AppData\Local\Continuum\anaconda3\envs\scann-lab

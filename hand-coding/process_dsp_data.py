@@ -17,11 +17,16 @@ plt.ioff()
 # Expects that the data is somewhere relative to the Analysis script
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 
+# For testing
+indir = os.path.join(scriptDir, "..", "tests")
+
+
+
 # Where are the raw data?
-indir = os.path.join(scriptDir, "..", "DSP_RawData")
+# indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
 
 # These should be set relative to the code directory.
-outdir_base = os.path.join(scriptDir, "..", "DSP_RawData", "Script_Output_DO_NOT_TOUCH")
+outdir_base = os.path.join(indir, "Script_Output_DO_NOT_TOUCH")
 outdir_for_summary_dfs = os.path.join(outdir_base, "summary_dfs")
 outdir_for_pdfs = os.path.join(outdir_base, "pdfs")
 outdir_movement = os.path.join(outdir_base, "raw_movement_data")
@@ -246,7 +251,7 @@ def pandas_to_csv(raw_df, default_fail_time="40"):
 
 def save_file(df, file: str, dir: str):
 
-    df.to_csv(os.path.join(dir, file), index=False)
+    df.to_csv(os.path.abspath(os.path.join(dir, file)), index=False)
 
     print(f"File saved as: {dir}//{file}\n")
 
@@ -273,7 +278,7 @@ def graph_trial(movement_df, trial_id, pdf):
 
     # Open the image with that trial structure
     imageFilename = trial_id.upper() + figureFiletype
-    bestImage = os.path.join(scriptDir, "Nav_stratAbility_Maps", imageFilename)
+    bestImage = os.path.join(scriptDir, "..", "Nav_stratAbility_Maps", imageFilename)
     img = imread(bestImage)
 
     plt.imshow(img, zorder=0, extent=[0.0, 222.0, 0.0, 222.0])  # left right bottom top
@@ -308,7 +313,9 @@ def run_all(file, csv=True, movement=True, pdf=True):
     # Open raw data and load dataframe
     with open(os.path.join(indir, file)) as infile:
 
-        raw_df = pd.read_csv(infile, sep="\n", header=None, names=["lines"])
+        # Hack here to use a separator that we aren't using so each line gets read in one at a time.
+        raw_df = pd.read_csv(infile, sep="\t", header=None, names=["lines"])
+
     # Transform raw data to a formatted df and a trajectory only dataset
     df, movement_df = pandas_to_csv(raw_df)
 
