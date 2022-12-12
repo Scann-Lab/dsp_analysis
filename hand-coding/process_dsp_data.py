@@ -17,13 +17,16 @@ plt.ioff()
 # Expects that the data is somewhere relative to the Analysis script
 scriptDir = os.path.dirname(os.path.realpath(__file__))
 
+# For testing
+indir = os.path.join(scriptDir, "..", "tests")
+
+
+
 # Where are the raw data?
-indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
+# indir = os.path.join(scriptDir, "..", "..", "DSP_RawData")
 
 # These should be set relative to the code directory.
-outdir_base = os.path.join(
-    scriptDir, "..", "..", "DSP_RawData", "Script_Output_DO_NOT_TOUCH"
-)
+outdir_base = os.path.join(indir, "Script_Output_DO_NOT_TOUCH")
 outdir_for_summary_dfs = os.path.join(outdir_base, "summary_dfs")
 outdir_for_pdfs = os.path.join(outdir_base, "pdfs")
 outdir_movement = os.path.join(outdir_base, "raw_movement_data")
