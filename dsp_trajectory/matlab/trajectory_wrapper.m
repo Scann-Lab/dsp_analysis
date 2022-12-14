@@ -1,12 +1,19 @@
 %{ 
-To run this file, uncomment and run the following lines in Matlab: 
+%To run this file, change the scriptDir to the parent directory of the 
+%git repository, then copy and run the following lines in Matlab: 
 
-trajDir = '.\tests\test_data\Script_Output_DO_NOT_TOUCH\trajectories';
-fnOut = '.\tests\test_data\Script_Output_DO_NOT_TOUCH\trajectories\frechet_by_trial.csv';
-templateDir = '.\dsp_analysis\dsp_trajectory\templates';
-scriptDir = ".\dsp_analysis\dsp_trajectory"
-addpath(scriptDir);
-trajectory_wrapper(trajDir, fnOut, templateDir)
+%Change this line to the path for your script directory!
+scriptDir = 'C:\Users\stevenweisberg\Documents\dsp_analysis';
+
+%Change this line to the path for your trajectories directory
+%(allTrajectories_1.csv and allTrajectories_2.csv)
+trajDir = horzcat(scriptDir, '\tests\test_data\validation_output\trajectories');
+
+
+fnOut = horzcat(trajDir, '\frechet_by_trial.csv');
+templateDir = horzcat(scriptDir, '\dsp_trajectory\templates');
+addpath(horzcat(scriptDir, '\dsp_trajectory\matlab'));
+trajectory_wrapper(trajDir, fnOut, templateDir);
 
 %}
 
