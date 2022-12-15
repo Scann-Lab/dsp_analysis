@@ -226,7 +226,7 @@ def pandas_to_csv(raw_df, default_fail_time="40"):
     movement_df["ParticipantNo"] = (
         raw_df.query('lines.str.contains("ParticipantNo")', engine="python")
         .iloc[0]["lines"]
-        .split(": ")[-1]
+        .split(": ")[-1][:5]
     )
 
     return df, movement_df

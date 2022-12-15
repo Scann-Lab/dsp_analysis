@@ -17,4 +17,4 @@ if __name__ == "__main__":
 
     args = vars(parser.parse_args())
 
-    merge_dspy.merge_dspy(args["indir"], args["meta"], args["outdir"])
+    merge_dspy.merge_dsp_data(args["indir"], args["meta"], args["outdir"])

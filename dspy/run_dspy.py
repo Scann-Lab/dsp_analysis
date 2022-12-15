@@ -23,10 +23,27 @@ if __name__ == "__main__":
         required=False,
     )
 
-    parser.set_defaults(scriptdir=scriptDir, val=False)
+    parser.add_argument(
+        "-p",
+        "--skippdfs",
+        help="Whether to skip PDFs generation",
+        required=False,
+        action="store_true",
+    )
+
+    parser.set_defaults(scriptdir=scriptDir, val=False, skippdfs=False)
 
     args = vars(parser.parse_args())
 
+    if args["skippdfs"]:
+        all_pdfs = False
+    else:
+        all_pdfs = True
+
     process_dsp_data.process_dsp_data(
-        args["indir"], args["outdir"], args["rerun"], args["scriptdir"]
+        args["indir"],
+        args["outdir"],
+        args["rerun"],
+        args["scriptdir"],
+        all_pdfs,
     )
