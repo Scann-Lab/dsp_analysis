@@ -11,6 +11,8 @@ import glob
 import process_dsp_data
 import shutil
 
+tmp_path = PosixPath('PYTEST_TMPDIR/test_create_file0')
+
 
 def test_sample_data():
 
@@ -35,7 +37,7 @@ def test_sample_data():
 
     # Generate the new output from the test.
     process_dsp_data.process_dsp_data(
-        test_data_path,
+        test_data_path = os.path.join(scriptDir, "test_data"),
         test_data_path,
         rerun=False,
         scriptDir=scriptDir,
@@ -62,14 +64,13 @@ def test_sample_data():
             )
         )
     )
-    print(valid_summary_files)
-    print(test_summary_files)
+    
     # Compare the summary dfs
     for i, j in enumerate(valid_summary_files):
 
         assert (
-            valid_summary_files[i].split("\\")[-1]
-            == test_summary_files[i].split("\\")[-1]
+            valid_summary_files[i].split(os.sep)[-1]
+            == test_summary_files[i].split(os.sep)[-1]
         )
 
         valid_summary_df = pd.read_csv(valid_summary_files[i])
@@ -87,8 +88,8 @@ def test_sample_data():
     for i, j in enumerate(valid_movement_files):
 
         assert (
-            valid_summary_files[i].split("\\")[-1]
-            == test_summary_files[i].split("\\")[-1]
+            valid_summary_files[i].split(os.sep)[-1]
+            == test_summary_files[i].split(os.sep)[-1]
         )
 
         valid_movement_df = pd.read_csv(valid_movement_files[i])
