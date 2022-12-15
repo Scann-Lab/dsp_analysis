@@ -35,8 +35,8 @@ def test_sample_data():
 
     # Generate the new output from the test.
     process_dsp_data.process_dsp_data(
-        os.path.join(scriptDir, "..", "tests", "test_data"),
-        os.path.join(scriptDir, "..", "tests", "test_data"),
+        test_data_path,
+        test_data_path,
         rerun=False,
         scriptDir=scriptDir,
         all_pdfs=False,
