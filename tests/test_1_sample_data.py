@@ -11,9 +11,6 @@ import glob
 import process_dsp_data
 import shutil
 
-tmp_path = PosixPath('PYTEST_TMPDIR/test_create_file0')
-
-
 def test_sample_data():
 
     # Expects that the data is somewhere relative to the Analysis script
