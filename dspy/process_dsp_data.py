@@ -364,11 +364,10 @@ def process_dsp_data(indir, outdir, rerun=False, scriptDir=".", all_pdfs=True):
     plt.ioff()
 
     # These should be set relative to the code directory.
-    outdir_base = os.path.join(outdir, "Script_Output_DO_NOT_TOUCH")
-    outdir_for_summary_dfs = os.path.join(outdir_base, "summary_dfs")
-    outdir_for_pdfs = os.path.join(outdir_base, "pdfs")
-    outdir_movement = os.path.join(outdir_base, "raw_movement_data")
-    outdir_trajectories = os.path.join(outdir_base, "trajectories")
+    outdir_for_summary_dfs = os.path.join(outdir, "summary_dfs")
+    outdir_for_pdfs = os.path.join(outdir, "pdfs")
+    outdir_movement = os.path.join(outdir, "raw_movement_data")
+    outdir_trajectories = os.path.join(outdir, "trajectories")
 
     os.makedirs(outdir_for_summary_dfs, exist_ok=True)
     os.makedirs(outdir_for_pdfs, exist_ok=True)
@@ -391,7 +390,7 @@ def process_dsp_data(indir, outdir, rerun=False, scriptDir=".", all_pdfs=True):
     if rerun:
 
         warnings.warn(
-            f"All files in {outdir_base} will be overwritten! \nConsider changing the output base directory instead."
+            f"All files in {outdir} will be overwritten! \nConsider changing the output base directory instead."
         )
         raw_files = raw_files_all
 

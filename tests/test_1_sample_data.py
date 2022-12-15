@@ -17,7 +17,7 @@ def test_sample_data():
     # Expects that the data is somewhere relative to the Analysis script
     scriptDir = os.path.dirname(os.path.realpath(__file__))
     # We compare two directories: validation directory and the new output of this test.
-    test_data_path = os.path.join(scriptDir, "test_data", "Script_Output_DO_NOT_TOUCH")
+    test_data_path = os.path.join(scriptDir, "test_data", "test_output")
 
     valid_data_path = os.path.join(scriptDir, "test_data", "validation_output")
 
