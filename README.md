@@ -1,5 +1,7 @@
 # Analysis code for the Unity version of the Dual Solution Paradigm
 
+[![Python application](https://github.com/Scann-Lab/dsp_analysis/actions/workflows/python-app.yml/badge.svg)](https://github.com/Scann-Lab/dsp_analysis/actions/workflows/python-app.yml)
+
 1. Install Anaconda and VSCode 
 2. Git clone the dsp_analysis repo onto your local machine. 
 3. Create the conda environment with an Anaconda Prompt `conda env -n dsp-analysis create environment.yml`
