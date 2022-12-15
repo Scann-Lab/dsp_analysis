@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 ## Plots
+success_wide = ""
+all_df = ""
+
 
 plt.figure()
 ax3 = sns.boxplot(
