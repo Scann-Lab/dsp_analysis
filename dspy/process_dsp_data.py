@@ -301,7 +301,7 @@ def run_all(
     # Processing file
     print(f"Processing {file}\n")
     # Grab the filename stem
-    filename_stem = file[:-4].split("\\")[-1]
+    filename_stem = file[:-4].split(os.sep)[-1]
 
     # Open raw data and load dataframe
     with open(os.path.join(indir, file)) as infile:
@@ -376,9 +376,9 @@ def process_dsp_data(indir, outdir, rerun=False, scriptDir=".", all_pdfs=True):
 
     # Select all text files corresponding to test (e.g., NOT listed with Training or Ranking in the filename)
     raw_files_all = list(
-        set(glob.glob(indir + "//*.txt"))
-        - set(glob.glob(indir + "//*Training*"))
-        - set(glob.glob(indir + "//*Ranking*"))
+        set(glob.glob(indir + os.sep + "*.txt"))
+        - set(glob.glob(indir + os.sep + "*Training*"))
+        - set(glob.glob(indir + os.sep + "*Ranking*"))
     )
 
     # Initialize lists for each of these separately.
