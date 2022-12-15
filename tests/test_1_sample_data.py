@@ -62,7 +62,8 @@ def test_sample_data():
             )
         )
     )
-
+    print(valid_data_path)
+    print(test_data_path)
     # Compare the summary dfs
     for i, j in enumerate(valid_summary_files):
 
