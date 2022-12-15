@@ -21,7 +21,6 @@ dependencies:
   - glib=2.69.1
   - gst-plugins-base=1.18.5
   - gstreamer=1.18.5
-  - icc_rt=2022.1.0
   - icu=58.2
   - imageio=2.19.3
   - iniconfig=1.1.1
@@ -32,7 +31,6 @@ dependencies:
   - libbrotlicommon=1.0.9
   - libbrotlidec=1.0.9
   - libbrotlienc=1.0.9
-  - libclang=12.0.0
   - libdeflate=1.8
   - libffi=3.4.2
   - libiconv=1.16
@@ -74,7 +72,6 @@ dependencies:
   - python=3.10.6
   - python-dateutil=2.8.2
   - pytz=2022.1
-  - pywin32=302
   - qt-main=5.15.2
   - qt-webengine=5.15.9
   - qtwebkit=5.212
@@ -89,11 +86,7 @@ dependencies:
   - tomli=2.0.1
   - tornado=6.2
   - tzdata=2022c
-  - vc=14.2
-  - vs2015_runtime=14.27.29016
   - wheel=0.37.1
-  - wincertstore=0.2
-  - xlwings=0.27.15
   - xz=5.2.6
   - zlib=1.2.12
   - zstd=1.5.2
@@ -114,4 +107,10 @@ dependencies:
     - simplejson==3.17.6
     - traits==6.3.2
     - urllib3==1.26.12
-prefix: C:\Users\smwei\Anaconda3\envs\dsp-analysis
+    - vc=14.2
+    - libclang=12.0.0
+    - vs2015_runtime=14.27.29016
+    - wincertstore=0.2
+    - icc_rt=2022.1.0
+    - xlwings=0.27.15
+    - pywin32=302
